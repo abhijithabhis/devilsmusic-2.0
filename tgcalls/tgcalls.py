@@ -1,24 +1,19 @@
-from pyrogram import Client
-from pytgcalls.pytgcalls import PyTgCalls
-
-import sira
-import config
-
-
-client = Client(config.SESSION_NAME, config.API_ID, config.API_HASH)
-pytgcalls = PyTgCalls(client, 1512, False)
+from pyrogram import filters
+from .callsmusic import client
+from . import group_call_instances
+from .. import queues
 
 
-@pytgcalls.on_stream_end()
-def on_stream_end(chat_id: int) -> None:
-    sira.task_done(chat_id)
-
-    if sira.is_empty(chat_id):
-        pytgcalls.leave_group_call(chat_id)
+@client.on_message(filters.me & filters.command("start"))
+async def pl(__, _):
+    if _.chat.id in group_call_instances.active_chats:
+        queues.put(_.chat.id, 'out.raw')
     else:
-        pytgcalls.change_stream(
-            chat_id, sira.get(chat_id)["file_path"]
-        )
+        await group_call_instances.set_stream(_.chat.id, 'out.raw')
 
 
-run = pytgcalls.run
+@client.on_message(filters.me & filters.command("stop"))
+async def pl(__, _):
+    await group_call_instances.stop(_.chat.id)
+
+client.run()
