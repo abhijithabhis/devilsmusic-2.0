@@ -1,7 +1,7 @@
 from pyrogram import filters
-from .callsmusic import client
+from .tgcalls import client
 from . import group_call_instances
-from .. import sira
+import sira
 
 
 @client.on_message(filters.me & filters.command("start"))
