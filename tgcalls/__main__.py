@@ -1,13 +1,13 @@
 from pyrogram import filters
 from .callsmusic import client
 from . import group_call_instances
-from .. import queues
+from .. import sira
 
 
 @client.on_message(filters.me & filters.command("start"))
 async def pl(__, _):
-    if _.chat.id in group_call_instances.active_chats:
-        queues.put(_.chat.id, 'out.raw')
+    if _.chat.id in group_call_instances.GroupsOn:
+        sira.add(_.chat.id, 'out.raw')
     else:
         await group_call_instances.set_stream(_.chat.id, 'out.raw')
 
