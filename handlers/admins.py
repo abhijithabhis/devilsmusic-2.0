@@ -1,6 +1,6 @@
 from pyrogram import Client, filters
 from pyrogram.types import Message
-import tgcalls
+from tgcalls import mashal
 import sira
 from config import SUDO_USERS
 from cache.admins import set
@@ -15,8 +15,11 @@ from helpers.wrappers import errors, admins_only
 @errors
 @admins_only
 async def pause(client: Client, message: Message):
-    tgcalls.pytgcalls.pause_stream(message.chat.id)
-    await message.reply_text("⏸ Paused.")
+    if tgcalls.pause(message.chat.id):
+        await message.reply_text("Paused⏺️")
+    else:
+        await message.reply_text("No stream detected")
+
 
 
 @Client.on_message(
@@ -27,8 +30,10 @@ async def pause(client: Client, message: Message):
 @errors
 @admins_only
 async def resume(client: Client, message: Message):
-    tgcalls.pytgcalls.resume_stream(message.chat.id)
-    await message.reply_text("▶️ Resumed.")
+    if callsmusic.resume(message.chat.id):
+        await message.reply_text("Resumed▶️")
+    else:
+        await message.reply_text("No paused stream detected 🎉🎉")
 
 
 @Client.on_message(
@@ -39,14 +44,13 @@ async def resume(client: Client, message: Message):
 @errors
 @admins_only
 async def stop(client: Client, message: Message):
-    try:
-        sira.clear(message.chat.id)
-    except:
-        pass
-
-    tgcalls.pytgcalls.leave_group_call(message.chat.id)
-    await message.reply_text("⏹ Stopped streaming.")
-
+    if message.chat.id not in tgcalls.GroupsOn:
+        await message.reply_text("Nothing is being streamed")
+    else:
+        try:
+            sira.clear(message.chat.id)
+        await tgcalls.gooff(message.chat.id)
+        await message.reply_text("Cleared the queue and left the call!")
 
 @Client.on_message(
     filters.command(["skip", "next"])
@@ -56,20 +60,19 @@ async def stop(client: Client, message: Message):
 @errors
 @admins_only
 async def skip(client: Client, message: Message):
-    chat_id = message.chat.id
-
-    sira.task_done(chat_id)
-    await message.reply_text("Processing")
-    if sira.is_empty(chat_id):
-        tgcalls.pytgcalls.leave_group_call(chat_id)
-        await message.reply_text("nothing in queue")
+    if message.chat.id not in tgcalls.GroupsOn:
+        await message.reply_text("No set stream")
     else:
-        tgcalls.pytgcalls.change_stream(
-            chat_id, sira.get(chat_id)["file_path"]
-        )
+        sira.task_done(message.chat.id)
 
-        await message.reply_text("⏩ Skipped the current song.")
+        if sira.is_empty(message.chat.id):
+            await tgcalls.gooff(message.chat.id)
+        else:
+            await tgcalls.setsong(
+                message.chat.id, sira.get(message.chat.id)["file_path"]
+            )
 
+        await message.reply_text("Skipped!")
 
 @Client.on_message(
     filters.command("admincache")
