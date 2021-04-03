@@ -74,10 +74,10 @@ async def play(client: Client, message_: Message):
 
         url = text[offset:offset+length]
 
-        file_path =await convert(download(url))
+        file =await convert(download(url))
 
     if message_.chat.id in tgcalls.pytgcalls.active_calls:
-        position = sira.add(message_.chat.id, file_path)
+        position = sira.add(message_.chat.id, file)
         await res.edit_text(f"#️⃣ Queued at position {position}.")
     else:
         await res.edit_text("▶️ Playing...")
@@ -87,7 +87,7 @@ async def play(client: Client, message_: Message):
         photo="https://telegra.ph/file/fe07b15733ed56f103cb4.jpg",
         caption=f"Playing Your song Via Devil music bot.",
          ) 
-        tgcalls.pytgcalls.join_group_call(message_.chat.id, file_path, 48000 , tgcalls.pytgcalls.get_cache_peer())
+        tgcalls.setsong(message_.chat.id, file)
 
 @Client.on_message(
     filters.command("deezer")
