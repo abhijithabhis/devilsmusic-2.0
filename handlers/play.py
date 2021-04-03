@@ -47,7 +47,7 @@ async def play(client: Client, message_: Message):
             )
 
         file_name = audio.file_id + audio.file_name.split(".")[-1]
-        file_path = await convert(await message_.reply_to_message.download(file_name))
+        file = await convert(await message_.reply_to_message.download(file_name))
     else:
         messages = [message_]
         text = ""
@@ -76,7 +76,7 @@ async def play(client: Client, message_: Message):
 
         file =await convert(download(url))
 
-    if message_.chat.id in tgcalls.pytgcalls.active_calls:
+    if message_.chat.id in tgcalls.GroupsOn:
         position = sira.add(message_.chat.id, file)
         await res.edit_text(f"#️⃣ Queued at position {position}.")
     else:
@@ -113,17 +113,17 @@ async def deezer(client: Client, message_: Message):
         )
         is_playing = False
         return
-    file_path= await convert(wget.download(url))
+    f= await convert(wget.download(url))
     await res.edit("Generating Thumbnail")
     await generate_cover_square(requested_by, title, artist, duration, thumbnail)
-    if message_.chat.id in tgcalls.pytgcalls.active_calls:
+    if message_.chat.id in tgcalls.GroupsOn:
         await res.edit("adding in queue")
-        position = sira.add(message_.chat.id, file_path)
+        position = sira.add(message_.chat.id, fi)
         await res.edit_text(f"#️⃣ Queued at position {position}.")
     else:
         await res.edit_text("▶️ Playing...")
-        tgcalls.pytgcalls.join_group_call(message_.chat.id, file_path, 48000 , tgcalls.pytgcalls.get_cache_peer())
-    await res.delete()
+        tgcalls.setsong(message_.chat.id, file)
+        await res.delete()
     m = await client.send_photo(
         chat_id=message_.chat.id,
         photo="final.png",
@@ -160,13 +160,13 @@ async def jiosaavn(client: Client, message_: Message):
         print(str(e))
         is_playing = False
         return
-    file_path= await convert(wget.download(slink))
-    if message_.chat.id in tgcalls.pytgcalls.active_calls:
-        position = sira.add(message_.chat.id, file_path)
+    file= await convert(wget.download(slink))
+    if message_.chat.id in tgcalls.GroupsOn:
+        position = sira.add(message_.chat.id, file)
         await res.edit_text(f"#️⃣ Queued at position {position}.")
     else:
         await res.edit_text("▶️ Playing...")
-        tgcalls.pytgcalls.join_group_call(message_.chat.id, file_path, 48000, tgcalls.pytgcalls.get_cache_peer())
+        tgcalls.setsong(message_.chat.id, file)
     await res.edit("Processing Thumbnail.")
     await generate_cover_square(requested_by, sname, ssingers, sduration, sthumb)
     await res.delete()
@@ -211,13 +211,13 @@ async def ytp(client: Client, message_: Message):
         is_playing = False
         print(str(e))
         return
-    file_path = await convert(download(link))
-    if message_.chat.id in tgcalls.pytgcalls.active_calls:
-        position = sira.add(message_.chat.id, file_path)
+    file = await convert(download(link))
+    if message_.chat.id in tgcalls.GroupsOn:
+        position = sira.add(message_.chat.id, file)
         await res.edit_text(f"#️⃣ Queued at position {position}.")
     else:
         await res.edit_text("▶️ Playing...")
-        tgcalls.pytgcalls.join_group_call(message_.chat.id, file_path, 48000 , tgcalls.pytgcalls.get_cache_peer())
+        tgcalls.setsong(message_.chat.id, file)
     await res.edit("Processing Thumbnail.")
     await generate_cover(requested_by, title, views, duration, thumbnail)
     res.delete
