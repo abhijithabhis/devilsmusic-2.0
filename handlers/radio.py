@@ -5,8 +5,7 @@ import ffmpeg
 from pyrogram import Client, filters
 from pyrogram.types import Message
 
-import tgcalls
-
+from pytgcalls import GroupCall
 # Example of pinned message in a chat:
 '''
 Radio stations:
