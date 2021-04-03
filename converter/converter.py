@@ -4,8 +4,8 @@ import asyncio
 from helpers.errors import FFmpegReturnCodeError
 
 
-async def convert(file_path: str) -> str:
-    out = path.basename(file_path)
+async def convert(file: str) -> str:
+    out = path.basename(file)
     out = out.split(".")
     out[-1] = "raw"
     out = ".".join(out)
