@@ -1,6 +1,6 @@
 from pyrogram import Client, filters
 from pyrogram.types import Message
-from tgcalls import mashal
+from tgcalls import marshal
 import sira
 from config import SUDO_USERS
 from cache.admins import set
@@ -69,7 +69,7 @@ async def skip(client: Client, message: Message):
             await tgcalls.gooff(message.chat.id)
         else:
             await tgcalls.setsong(
-                message.chat.id, sira.get(message.chat.id)["file_path"]
+                message.chat.id, sira.get(message.chat.id)["file"]
             )
 
         await message.reply_text("Skipped!")
