@@ -1,5 +1,5 @@
 from typing import Dict
-from tgcalls import GroupCall
+from pytgcalls import GroupCall
 import sira
 from . import client
 
