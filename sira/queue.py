@@ -7,12 +7,13 @@ from typing import Dict, Union
 queues: Dict[int, Queue] = {}
 
 
-def add(chat_id: int, file_path: str) -> int:
+
+async def add(chat_id: int, **kwargs) -> int:
     if chat_id not in queues:
         queues[chat_id] = Queue()
-
-    queues[chat_id].put({"file_path": file_path})
+    await queues[chat_id].put({**kwargs})
     return queues[chat_id].qsize()
+
 
 
 def get(chat_id: int) -> Union[Dict[str, str], None]:
