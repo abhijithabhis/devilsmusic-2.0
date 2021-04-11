@@ -38,7 +38,7 @@ chat_id = None
 async def play(client: Client, message_: Message):
     audio = (message_.reply_to_message.audio or message_.reply_to_message.voice) if message_.reply_to_message else None
     chat_id=message_.chat.id
-    res = await message_.reply_text("🔄 Processing...")
+    res = await message_.reply_text("🔄 Please Wait...")
 
     if audio:
         if round(audio.duration / 60) > DURATION_LIMIT:
@@ -69,7 +69,7 @@ async def play(client: Client, message_: Message):
                         break
 
         if offset == None:
-            await res.edit_text("❕ You did not give me anything to play.")
+            await res.edit_text("❕ I don't know what you want to play")
             return
 
         url = text[offset:offset+length]
@@ -80,12 +80,12 @@ async def play(client: Client, message_: Message):
         position = sira.add(message_.chat.id, file)
         await res.edit_text(f"#️⃣ Queued at position {position}.")
     else:
-        await res.edit_text("▶️ Playing...")
+        await res.edit_text("▶️Now Playing...")
         res.delete
         m = await client.send_photo(
         chat_id=message_.chat.id,
-        photo="https://telegra.ph/file/fe07b15733ed56f103cb4.jpg",
-        caption=f"Playing Your song Via Devil music bot.",
+        photo="https://telegra.ph/file/5af2e8a554ace2ca898b0.jpg",
+        caption=f"Playing Your song Via RADIO CAT.",
          ) 
         tgcalls.setsong(message_.chat.id, file)
 
@@ -98,7 +98,7 @@ async def deezer(client: Client, message_: Message):
     requested_by = message_.from_user.first_name
     text = message_.text.split(" ", 1)
     queryy = text[1]
-    res = await message_.reply_text(f"Searching 🔍🔎🔍🔎 for `{queryy}` on deezer")
+    res = await message_.reply_text(f"Searching 🔍 for `{queryy}` on deezer")
     try:
         arq = ARQ("https://thearq.tech")
         r = await arq.deezer(query=queryy, limit=1)
@@ -141,7 +141,7 @@ async def jiosaavn(client: Client, message_: Message):
     chat_id=message_.chat.id
     text = message_.text.split(" ", 1)
     query = text[1]
-    res = await message_.reply_text(f"Searching 🔍🔎🔍🔎 for `{query}` on jio saavn")
+    res = await message_.reply_text(f"Searching 🔍 for `{query}` on jio saavn")
     try:
         async with aiohttp.ClientSession() as session:
             async with session.get(
@@ -196,7 +196,7 @@ async def ytp(client: Client, message_: Message):
     chat_id=message_.chat.id
     text = message_.text.split(" ", 1)
     query = text[1]
-    res = await message_.reply_text(f"Searching 🔍🔎🔍🔎 for `{query}` on You Tube")
+    res = await message_.reply_text(f"Searching 🔍 for `{query}` on You Tube")
     try:
         results = YoutubeSearch(query, max_results=1).to_dict()
         link = f"https://youtube.com{results[0]['url_suffix']}"
